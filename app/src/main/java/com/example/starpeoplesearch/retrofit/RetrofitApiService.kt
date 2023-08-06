@@ -31,7 +31,7 @@ class RetrofitApiService {
 
     }
 
-    fun searchStarShip(starShip: String) : List<StarShip>?{
+   suspend fun searchStarShip(starShip: String) : List<StarShip>?{
         var result : List<StarShip>? =null
         CoroutineScope(Dispatchers.IO).launch {
             result = starWarApi().getStarhips( starShip).results
