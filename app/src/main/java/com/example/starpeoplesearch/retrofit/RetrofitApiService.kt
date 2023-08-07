@@ -21,21 +21,16 @@ class RetrofitApiService {
        return starRetrofit.create(StarWarsApi::class.java)
 
     }
-    fun searchPeople( name: String) : List<People>?{
-        var result :List<People>? = null
-        CoroutineScope(Dispatchers.IO).launch {
-          result =   starWarApi().getPeople(name).results
+  suspend  fun searchPeople( name: String) : List<People>?{
+        return withContext(Dispatchers.IO){
+            return@withContext starWarApi().getPeople(name).results
         }
-        return result
-
 
     }
 
    suspend fun searchStarShip(starShip: String) : List<StarShip>?{
-        var result : List<StarShip>? =null
-        CoroutineScope(Dispatchers.IO).launch {
-            result = starWarApi().getStarhips( starShip).results
-        }
-        return result
+       return withContext(Dispatchers.IO){
+        return@withContext   starWarApi().getStarhips(starShip).results
+       }
     }
 }
