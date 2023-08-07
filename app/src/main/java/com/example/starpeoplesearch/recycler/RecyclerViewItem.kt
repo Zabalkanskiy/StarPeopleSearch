@@ -22,7 +22,7 @@ class RecyclerViewItem(var items : List<Item>) : RecyclerView.Adapter<ViewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolderItem, position: Int) {
-     val positionItem =   filterList[position]
+        val positionItem =  filterList[position]
         holder.name.setText(positionItem.name)
         holder.information.setText((positionItem.information))
         holder.flavoredCheckBox.setOnClickListener{view ->
@@ -32,5 +32,10 @@ class RecyclerViewItem(var items : List<Item>) : RecyclerView.Adapter<ViewHolder
         }
         holder.flavoredCheckBox.isChecked = filterList.get(position).favourite
 
+    }
+
+    fun updateViewItem( newItem: List<Item>){
+        filterList = newItem.toMutableList()
+        notifyDataSetChanged()
     }
 }
