@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.starpeoplesearch.StarPeopleApplication
+import com.example.starpeoplesearch.recycler.loadFlavoredName
 import com.example.starpeoplesearch.retrofit.RetrofitApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -18,36 +20,19 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 
 class ViewModelStarPeople : ViewModel() {
 
     val itemList = MutableLiveData<List<Item>>()
 
-    @OptIn(ObsoleteCoroutinesApi::class)
-    val queryChannel = BroadcastChannel<String>(Channel.CONFLATED)
-
-    private var searchResult = queryChannel.asFlow().filter { it.length > 2 }.debounce(500).mapLatest {
-
-            searchStaarshipPeople(it)
-        }
-
-    var openResult = searchResult.asLiveData()
 
 
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    fun sea(str: String){
-       var live =  flow{
 
-                emit(str)
-                  }.filter { it.length > 2 }.debounce(500).mapLatest {
-               val result =  searchStaarshipPeople(it)
-                    itemList.postValue(result)
-                    result
-                }.asLiveData()
-        if(live.value!=null) {
-            itemList.postValue(live.value)
-        }
-    }
+
+
+
 
     fun new(name :String){
         if(name.length>2) {
@@ -59,10 +44,9 @@ class ViewModelStarPeople : ViewModel() {
 
     var retrofitApi = RetrofitApiService()
 
-    fun searchStaarshipPeople(strSearch : String): List<Item>{
+    fun searchStaarshipPeople(strSearch : String){
         var result: MutableList<Item> = mutableListOf()
         viewModelScope.launch {
-
             var peopleResult = retrofitApi.searchPeople(strSearch)
 
             if (peopleResult!=null){
@@ -128,12 +112,22 @@ class ViewModelStarPeople : ViewModel() {
                 var item = Item(starShip.name, information = information)
                 result.add(item)
             }
+            val flavItem = loadFlavoredName(StarPeopleApplication.getAppContext())
+            result.forEach { res ->
+                flavItem.forEach { flav ->
+                    if(res.name == flav.name){
+                        res.favourite = true
+                    }
+                }
+            }
+            itemList.postValue(result)
 
-            itemList.postValue(result)
+
         }
-        if(result != emptyList<Item>()) {
-            itemList.postValue(result)
-        }
-        return  result
+
+
+
     }
+
+
 }
