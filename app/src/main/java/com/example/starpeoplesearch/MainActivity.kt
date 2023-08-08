@@ -3,8 +3,10 @@ package com.example.starpeoplesearch
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -48,22 +50,35 @@ class MainActivity : AppCompatActivity() {
 
         searchEditText.doAfterTextChanged {
             lifecycleScope.launch {
-               viewModelStarPeople.queryChannel.send(it.toString())
               //  viewModelStarPeople.sea(it.toString())
+                viewModelStarPeople.new(it.toString())
             }
         }
         recyclerViewItem.layoutManager = LinearLayoutManager(applicationContext)
         //нужно загрузить list<Item>
-        val empty = listOf<Item>()
-        val recyclerItem = RecyclerViewItem(empty)
+
         recyclerViewItem.adapter = recyclerItem
 
-   //     viewModelStarPeople.openResult.observe(this, {
-    //       recyclerItem.updateViewItem(it)
-    //   })
+
+
 
         viewModelStarPeople.itemList.observe(this, {
-            recyclerItem.updateViewItem(it)
+            if(it.isNotEmpty()) {
+                recyclerItem.updateViewItem(it)
+                welcomeTextView.visibility = View.GONE
+                recyclerViewItem.visibility = View.VISIBLE
+
+            }else{
+                welcomeTextView.visibility = View.VISIBLE
+                recyclerViewItem.visibility = View.GONE
+            }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val data = recyclerItem.getData()
+        recyclerItem.updateViewItem(data)
+        //recyclerViewItem.adapter?.notifyDataSetChanged()
     }
 }
