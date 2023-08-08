@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var searchEditText: EditText
     lateinit var recyclerViewItem: RecyclerView
     lateinit var viewModelStarPeople: ViewModelStarPeople
+    lateinit var welcomeTextView: TextView
+
+    val empty = listOf<Item>()
+    val recyclerItem = RecyclerViewItem(empty)
     @OptIn(ObsoleteCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         flavoredActivityButton = findViewById(R.id.main_activity_favorite_button)
         searchEditText = findViewById(R.id.main_activity_search)
         recyclerViewItem = findViewById(R.id.main_activity_recycler_people)
+        welcomeTextView = findViewById(R.id.main_activity_welcome_text_view)
+        recyclerViewItem.visibility = View.GONE
 
         //start FlavoredActivity
         flavoredActivityButton.setOnClickListener{
