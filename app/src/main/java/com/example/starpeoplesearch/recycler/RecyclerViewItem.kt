@@ -60,15 +60,9 @@ class RecyclerViewItem(var items : List<Item>) : RecyclerView.Adapter<ViewHolder
     fun getData(): List<Item>{
         var pferFlavored = loadFlavoredName(StarPeopleApplication.getAppContext())
         if(pferFlavored.isNotEmpty()){
-            pferFlavored.forEach{flav ->
-                 filterList.forEach{ list ->
-                     if(list.name == flav.name){
-                        list.favourite = true
-                      }else {
-                           list.favourite = false
-                    }
-                 }
-            }
+            filterList.filter { fil -> pferFlavored.contains(fil) }.forEach{item -> item.favourite = true}
+            filterList.filterNot { fil -> pferFlavored.contains(fil) }.forEach{item -> item.favourite = false}
+
         } else {
             filterList.forEach({list ->
                 list.favourite = false
