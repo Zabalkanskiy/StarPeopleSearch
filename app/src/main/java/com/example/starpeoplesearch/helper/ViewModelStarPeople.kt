@@ -1,5 +1,6 @@
 package com.example.starpeoplesearch.helper
 
+import android.database.Observable
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.starpeoplesearch.StarPeopleApplication
 import com.example.starpeoplesearch.recycler.loadFlavoredName
 import com.example.starpeoplesearch.retrofit.RetrofitApiService
+import com.example.starpeoplesearch.retrofit.data.SearchPeople
+import com.example.starpeoplesearch.retrofit.data.SearchStarShip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -129,5 +132,11 @@ class ViewModelStarPeople : ViewModel() {
 
     }
 
+    fun searchRx(strSearch: String): Observable<SearchPeople>{
+       return retrofitApi.starWarApi().getPeopleRx(strSearch)
+    }
 
+    fun searchStarshipRx(strSearch: String): Observable<SearchStarShip>{
+        return retrofitApi.starWarApi().getStarhipsRx(strSearch)
+    }
 }

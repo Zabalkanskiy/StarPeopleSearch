@@ -33,4 +33,6 @@ class RetrofitApiService {
         return@withContext   starWarApi().getStarhips(starShip).results
        }
     }
+
+    fun searchStarShip(){}
 }

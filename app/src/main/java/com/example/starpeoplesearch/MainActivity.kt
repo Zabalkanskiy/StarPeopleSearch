@@ -3,6 +3,7 @@ package com.example.starpeoplesearch
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -15,8 +16,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.starpeoplesearch.helper.Item
 import com.example.starpeoplesearch.helper.ViewModelStarPeople
 import com.example.starpeoplesearch.recycler.RecyclerViewItem
+import com.example.starpeoplesearch.retrofit.data.SearchPeople
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.ObservableSource
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+import java.util.function.Function
+
+
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var flavoredActivityButton: Button
@@ -48,12 +57,24 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        searchEditText.doAfterTextChanged {
-            lifecycleScope.launch {
-              //  viewModelStarPeople.sea(it.toString())
-                viewModelStarPeople.new(it.toString())
+        //rxJva
+        RxTextView.afterTextChangeEvents(searchEditText).map { event-> event.view().text.toString().trim() }
+            .filter { it.length > 2 }
+            .debounce(500, TimeUnit.MICROSECONDS)
+            .distinctUntilChanged()
+            .subscribe{
+                text ->
+                viewModelStarPeople.new(text.toString())
+                Log.d("TEXT", text)
             }
-        }
+
+        //без rxJava раскоментируйте строки ниже
+      //  searchEditText.doAfterTextChanged {
+     //       lifecycleScope.launch {
+     //         //  viewModelStarPeople.sea(it.toString())
+     //           viewModelStarPeople.new(it.toString())
+     //       }
+     //   }
         recyclerViewItem.layoutManager = LinearLayoutManager(applicationContext)
         //нужно загрузить list<Item>
 
